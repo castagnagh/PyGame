@@ -5,6 +5,6 @@ class Light:
         self.position = glm.vec3(position)
         self.color = glm.vec3(color)
         #intensidades
-        self.Ia = 0.1 * self.color #ambiente
-        self.Id = 0.8 * self.color #difuse
-        self.Is = 1.0 * self.color #specular
+        self.Ia = 0.1 * self.color #ambiente cor
+        self.Id = 0.8 * self.color #difuse sombra/relevo
+        self.Is = 1.0 * self.color #specular brilho

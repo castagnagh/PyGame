@@ -4,6 +4,8 @@ import sys
 from model import *
 from camera import Camera
 from light import Light
+from mesh import Mesh
+from scene import Scene
 
 class GraphicsEngine:
     #metodo para converter os valores do tamanho da tela para o opengl
@@ -15,14 +17,16 @@ class GraphicsEngine:
         #setar atributos opengl especificando qual a mior e menor versão a ser utilizada
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 3)
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 3)
+        #seta um perfil para dizer que não usara a versão obsoleta
         pg.display.gl_set_attribute(pg.GL_CONTEXT_PROFILE_MASK, pg.GL_CONTEXT_PROFILE_CORE)
         #criando um contexto opengl
         pg.display.set_mode(self.WIN_SIZE, flags=pg.OPENGL | pg.DOUBLEBUF)
-        #configurações do mouse
+        #configurações do mouse para não passar da tela e para deixar invisivel
         pg.event.set_grab(True)
         pg.mouse.set_visible(False)
         #detecta e usa contexto opengl existente
         self.ctx = mgl.create_context()
+        #ativando o teste de profundidade (para não exibir as faces do fundo) | e cull face para não renderizar as fases do fundo 
         self.ctx.enable(flags=mgl.DEPTH_TEST | mgl.CULL_FACE)
         #self.ctx.front_face = 'cw'
         #cria um objeto para definir a taxa de atualização de quadros
@@ -33,21 +37,23 @@ class GraphicsEngine:
         self.light = Light()
         #camera
         self.camera = Camera(self)
+        #mesh
+        self.mesh = Mesh(self)
         #criando uma instancia da classe triangulo para renderizção
-        self.scene = Cube(self)
+        self.scene = Scene(self)
        
     
     #evendo para monitorar a tecla de ESC e Fechar a janela
     def check_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-                self.scene.destroy()
+                self.mesh.destroy()
                 pg.quit()
                 sys.exit()
     
     #metodo para limpar o buffer de tela e definir uma cor de fundo
     def render(self):
-        #limpando o buffer
+        #limpando o buffer e setando a cor
         self.ctx.clear(color=(0.08, 0.16, 0.18))
         self.scene.render()
         #trocando o buffer

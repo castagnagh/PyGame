@@ -30,6 +30,7 @@ vec3 getLight(vec3 color){
     //specular light
     vec3 viewDir = normalize(camPos - fragPos);
     vec3 reflectDir = reflect(-lightDir, Normal);
+    //o ultimo valor quanto maior mais forte será a luz refletida
     float spec = pow(max(dot(viewDir, reflectDir), 0), 32);
     vec3 specular = spec * light.Is;
 
@@ -37,8 +38,13 @@ vec3 getLight(vec3 color){
 }
 
 void main() {
+    float gamma = 2.2;
     vec3 color = texture(u_texture_0, uv_0).rgb;
+    color = pow(color, vec3(gamma));
+
     color = getLight(color);
+
+    color = pow(color, 1 / vec3(gamma));
     fragColor = vec4(color, 1.0);
     
 }
